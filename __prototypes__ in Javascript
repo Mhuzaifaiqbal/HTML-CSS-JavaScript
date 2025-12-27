@@ -1,0 +1,123 @@
+In JavaScript, **prototypes are the fundamental mechanism behind object sharing and inheritance**, and understanding which syntaxes are recommended versus discouraged is 
+essential for writing professional, maintainable code. Every object has an internal `[[Prototype]]` link that points to another object. When a property or method is accessed,
+JavaScript first looks on the object itself and, if not found, continues up the prototype chain until it either finds the property or reaches `null`.
+
+The **clean and recommended way to create an object with a specific prototype** is `Object.create()`, because it sets the prototype at object-creation time and allows 
+JavaScript engines to optimize the object efficiently. This approach is explicit, safe, and widely used in production systems:
+
+```js
+const parent = {
+  greet() {
+    return "Hello";
+  }
+};
+
+const child = Object.create(parent);
+child.greet(); // "Hello"
+```
+
+When constructor functions or classes are used, prototypes are set automatically. Methods defined on the constructor’s `prototype` (or inside a `class` body) are shared 
+across all instances, which is both memory-efficient and idiomatic. The modern `class` syntax is **strongly preferred**, as it is clearer and less error-prone while 
+still using prototypes internally:
+
+```js
+class User {
+  constructor(name) {
+    this.name = name;
+  }
+
+  sayHello() {
+    return `Hello ${this.name}`;
+  }
+}
+
+const u = new User("Ali");
+```
+
+Behind the scenes, `sayHello` is placed on `User.prototype`, and each instance delegates to it via the prototype chain.
+
+In contrast, **directly manipulating `__proto__` is discouraged**. Although `obj.__proto__` allows you to read or write an object’s prototype, it mutates the prototype after 
+the object has already been created, which can break engine optimizations and lead to subtle performance issues. It is also considered a legacy accessor and should not 
+appear in production code:
+
+```js
+// Discouraged
+child.__proto__ = parent;
+```
+
+If changing a prototype dynamically is unavoidable, `Object.setPrototypeOf()` is the standards-compliant alternative, but it is still slower than creating the object 
+correctly upfront and should be used sparingly:
+
+```js
+Object.setPrototypeOf(child, parent); // allowed, but not ideal
+```
+
+It is also important to understand that **prototypes do not support privacy**. Any property or method placed on an object or its prototype is accessible through the prototype 
+chain. Prototypes are therefore meant strictly for shared behavior, not for encapsulation.
+
+In professional practice—especially for backend APIs and large codebases—the recommended rules are straightforward: use **`class` syntax or constructor functions** for 
+structured models and services, use **`Object.create()`** for pure prototypal inheritance, and **avoid `__proto__` entirely**. This approach yields code that is predictable, 
+performant, and aligned with modern JavaScript engine behavior.
+
+
+JavaScript supports data privacy, but the mechanism depends on whether you are working with classes or plain objects. In modern JavaScript, **classes provide true, 
+language-enforced private members** using the `#` syntax. A private field declared with `#` is not stored on the object or its prototype and cannot be accessed, enumerated, 
+or reflected upon from outside the class. For example:
+
+```js
+class User {
+  #password;
+
+  constructor(password) {
+    this.#password = password;
+  }
+
+  checkPassword(pwd) {
+    return this.#password === pwd;
+  }
+}
+
+const u = new User("secret");
+// u.#password → SyntaxError (true privacy)
+```
+
+Plain JavaScript objects do not have native private members; all properties defined directly on an object or its prototype are public. To achieve privacy with objects, 
+the most common technique is **closures**, where private data lives in a function’s lexical scope rather than on the object itself. Because the variable is not attached 
+to the returned object, it is unreachable from the outside:
+
+```js
+function createUser(password) {
+  return {
+    checkPassword(pwd) {
+      return pwd === password;
+    }
+  };
+}
+
+const user = createUser("secret");
+// user.password → undefined
+```
+
+Another robust approach for object privacy is using a **WeakMap**, which stores private data keyed by the object instance. This allows methods to be shared while keeping 
+the data hidden and garbage-collectable, making it suitable for larger systems:
+
+```js
+const privateData = new WeakMap();
+
+function createUser(password) {
+  const obj = {};
+  privateData.set(obj, { password });
+
+  obj.checkPassword = function (pwd) {
+    return privateData.get(obj).password === pwd;
+  };
+
+  return obj;
+}
+```
+
+It is important to note that **prototypes cannot provide privacy**. Any property placed on an object or its prototype is accessible through the prototype chain, for example 
+via `Object.getPrototypeOf(obj)`. As a result, prototypes are designed for shared behavior, not encapsulation. In professional backend and API development, the 
+general rule is to **prefer classes with `#private` fields** for clean, secure, and performant encapsulation, and use closures or WeakMaps only when working with factory 
+functions or when class syntax is not appropriate.
+
