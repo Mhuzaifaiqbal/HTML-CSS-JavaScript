@@ -1,1 +1,35 @@
 
+This repository contains my **personal HTML notes**, created to document my learning journey and consolidate my conceptual understanding of HTML. 
+The notes are intended to serve as a reference for myself and also to help others who are learning HTML, from basics to intermediate concepts.
+
+## Purpose
+- To **track and organize** my HTML learning progress.
+- To provide **clear explanations** and examples for fundamental HTML concepts.
+- To help **other learners** quickly understand HTML syntax, structure, and best practices.
+
+## Content
+The notes cover topics such as:  
+- HTML structure and elements  
+- Headings, paragraphs, and text formatting  
+- Links, images, and multimedia  
+- Lists, tables, and forms  
+- Semantic HTML and accessibility  
+- Basic styling and attributes  
+
+## Learning Resources & References
+concepts and explanations were reinforced using online resources such as:  
+- [Apna College - YouTube Channel](https://www.youtube.com/watch?v=HcOc7P5BMi4&t=1008s)  
+- [GeeksforGeeks](https://www.geeksforgeeks.org/html/html-complete-guide/)  
+
+## How to Use
+- Browse through the notes to understand HTML concepts in a structured way.  
+- Use examples to practice coding in your own HTML files.  
+- Contributions or suggestions are welcome; feel free to open an issue or pull request if you have improvements or corrections.
+
+## License
+This repository is open for educational purposes. You may use the notes for personal learning and reference.
+
+---
+
+**Note:** These notes reflect my learning journey and conceptual understanding of HTML and are intended to assist both myself and fellow learners.
+
